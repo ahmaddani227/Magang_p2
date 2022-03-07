@@ -12,7 +12,7 @@ class Admin extends CI_Controller{
     public function index()
     {
         $data['title'] = 'Dashboard';
-        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+        $data['user'] = $this->admin->user();
         $data['jmlUser'] = $this->admin->jmlUser();
         $data['jmlMenu'] = $this->admin->jmlMenu();
         $data['jmlSubmenu'] = $this->admin->jmlSubmenu();
@@ -26,13 +26,57 @@ class Admin extends CI_Controller{
 
     public function role()
     {
-        $data['title'] = 'Role';
-        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
-        $this->load->view('templates/header', $data);
-        $this->load->view('templates/sidebar', $data);
-        $this->load->view('templates/topbar', $data);
-        $this->load->view('admin/role', $data);
-        $this->load->view('templates/footer');
+        $data['title']  = 'Role';
+        $data['user']   = $this->admin->user();
+        $data['role']   = $this->admin->role();
+
+        $this->form_validation->set_rules('role', 'Role', 'required');
+        if ($this->form_validation->run() == FALSE){
+            $this->load->view('templates/header', $data);
+            $this->load->view('templates/sidebar', $data);
+            $this->load->view('templates/topbar', $data);
+            $this->load->view('admin/role', $data);
+            $this->load->view('templates/footer');
+        }else{
+            $this->admin->tambahRole();
+            $this->session->set_flashdata('admin', 'ditambahkan');
+            redirect('admin/role');
+        }
     }
 
+    public function roleAkses($role_id)
+    {
+        $data['title']  = 'Role';
+        $data['user']   = $this->admin->user();
+        $data['roleId'] = $this->admin->roleId($role_id);
+        $data['menu']   = $this->admin->menu();
+
+        $this->form_validation->set_rules('role', 'Role', 'required');
+        if ($this->form_validation->run() == FALSE){
+            $this->load->view('templates/header', $data);
+            $this->load->view('templates/sidebar', $data);
+            $this->load->view('templates/topbar', $data);
+            $this->load->view('admin/role-akses', $data);
+            $this->load->view('templates/footer');
+        }else{
+            $this->admin->editRole();
+            $this->session->set_flashdata('admin', 'diedit');
+            redirect('admin/role');
+        }
+    }
+
+    public function ubahAkses()
+    {
+        $this->admin->ubahAkses();
+
+        $this->session->set_flashdata('admin', 'diubah');
+    }
+
+    public function hapusRole($id)
+    {
+        $this->db->delete('user_role', ['id' => $id]);
+        $this->session->set_flashdata('admin', 'dihapus');
+        redirect('admin/role');
+    }
+    
 }

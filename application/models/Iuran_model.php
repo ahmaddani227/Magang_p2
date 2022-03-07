@@ -72,7 +72,7 @@ class Iuran_model extends CI_Model{
                   INNER JOIN `bulan` ON `bulan`.`id` = `data_iuran`.`bulan_id`
                   INNER JOIN `tahun` ON `tahun`.`id` = `data_iuran`.`tahun_id`
                   INNER JOIN `metode_pembayaran` ON `metode_pembayaran`.`id` = `data_iuran`.`metode_id`
-                  WHERE `user_id` = $id ORDER BY `bulan` DESC
+                  WHERE `user_id` = $id ORDER BY `bulan`.`id` ASC
                 ";
                 // tambahkan AND WHERE diatas untuk tahun
         return $this->db->query($query)->result_array();

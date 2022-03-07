@@ -18,12 +18,9 @@
                             <select class="mx-2 shadow-sm form-control-sm btn-info" name="tahunIndex">
                                 <option value="">Tahun</option>
                                 <?php foreach( $tahunIndex as $tI ) : ?>
-                                <?php if( $tI['tahun_db'] == date('Y', time()) ) : ?>
-                                <option value="<?= $tI['id']; ?>" selected>
-                                    <?php else : ?>
                                 <option value="<?= $tI['id']; ?>">
-                                    <?php endif; ?>
-                                    <?= $tI['tahun_db'] ; ?> </option>
+                                    <?= $tI['tahun_db'] ; ?>
+                                </option>
                                 <?php endforeach; ?>
                             </select>
                         </form>
@@ -32,7 +29,7 @@
                             class="fas fa-file-export fa-sm "></i>
                         Export Excel </a>
                     <div class="table-responsive">
-                        <table class="table  table-hover table-bordered mt-3">
+                        <table class="table  table-hover table-bordered table-striped mt-1">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>

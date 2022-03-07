@@ -10,22 +10,20 @@
                 <div class="col-lg">
                     <a href="<?= base_url('master/excel'); ?>"
                         class="btn btn-success btn-sm  float-right ml-2 shadow-sm"> <i
-                            class="fas fa-file-export fa-sm "></i>
+                            class="fas fa-file-export fa-sm text-white-50"></i>
                         Export Excel </a>
                     <div class="form-group float-right mb-3">
-                        <form action="<?= base_url('master/data_iuran'); ?>" method="post">
-                            <select class="mx-2 shadow-sm form-control-sm btn-info" name="tahunMaster">
-                                <?php foreach( $tahunMaster as $tM ) : ?>
-                                <?php if( $tM['tahun_db'] == date('Y', time()) ) : ?>
-                                <option value="<?= $tM['id']; ?>" selected>
-                                    <?php else : ?>
-                                <option value="<?= $tM['id']; ?>">
-                                    <?php endif; ?>
-                                    <?= $tM['tahun_db'] ; ?>
-                                </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </form>
+                        <select class="mx-2 shadow-sm form-control-sm btn-info" name="tahunMaster">
+                            <?php foreach( $tahunMaster as $tM ) : ?>
+                            <?php if( $tM['tahun_db'] == date('Y', time()) ) : ?>
+                            <option value="<?= $tM['id']; ?>" selected>
+                                <?php else : ?>
+                            <option value="<?= $tM['id']; ?>">
+                                <?php endif; ?>
+                                <?= $tM['tahun_db'] ; ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered mt-3">

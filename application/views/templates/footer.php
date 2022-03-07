@@ -2,7 +2,7 @@
 <footer class="sticky-footer bg-white">
     <div class="container my-auto">
         <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Turbo Coding <?= date('Y'); ?></span>
+            <span>Copyright &copy; Ahmad Dani <?= date('Y'); ?></span>
         </div>
     </div>
 </footer>
@@ -49,20 +49,43 @@
 <!-- Custom scripts for all pages-->
 <script src="<?= base_url('assets/'); ?>js/sb-admin-2.min.js"></script>
 
-<!-- Page level plugins -->
-<!-- <script src="<?= base_url('assets/'); ?>vendor/chart.js/Chart.min.js"></script> -->
-
-<!-- Page level custom scripts -->
-<!-- <script src="<?= base_url('assets/'); ?>js/demo/chart-area-demo.js"></script> -->
-<!-- <script src="<?= base_url('assets/'); ?>js/demo/chart-pie-demo.js"></script> -->
-<!-- <script src="<?= base_url('assets/'); ?>js/demo/chart-bar-demo.js"></script> -->
-
+<!-- CHART.JS(CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script src="<?= base_url('assets/'); ?>js/my_charts.js"></script>
 
 <!-- my javascript -->
 <script>
+// jquery untuk fprm edit image
 $('.custom-file-input').on('change', function() {
     let fileName = $(this).val().split('\\').pop();
     $(this).next('.custom-file-label').addClass("selected").html(fileName);
+});
+
+// jquery untuk form select pembayaran
+$('#bulan').on('change', function() {
+    // ambil data dari elemen option yang dipilih
+    const Nominal = $('#bulan option:selected').data('nominal');
+
+    // tampilkan data ke elemen
+    $('[name = nominal]').val(Nominal);
+});
+
+// jquery role akses
+$('.form-check-input').on('click', function() {
+    const roleId1 = $(this).data('role');
+    const menuId1 = $(this).data('menu');
+
+    $.ajax({
+        url: "<?= base_url('admin/ubahAkses'); ?>",
+        type: "post",
+        data: {
+            roleId: roleId1,
+            menuId: menuId1
+        },
+        success: function() {
+            document.location.href = "<?= base_url('admin/roleAkses/'); ?>" + roleId1;
+        }
+    });
 });
 </script>
 

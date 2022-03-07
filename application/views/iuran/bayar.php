@@ -10,7 +10,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table  table-hover table-bordered mb-0">
+                        <table class="table  table-hover table-bordered table-striped mb-0">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
@@ -49,27 +49,12 @@
                     <div class="row">
                         <div class="col-lg">
                             <form action="<?= base_url('iuran/bayar'); ?>" method="POST">
-
-                                <div class="form-group mb-1">
-                                    <label for="nominal" class="mb-0 mt-1">Nominal</label>
-                                    <select name="nominal" id="nominal" class="form-control">
-                                        <option value="">Nominal</option>
-                                        <?php foreach( $nominal as $n ) : ?>
-                                        <option value="<?= $n['nominal'] ?>"> <?= $n['nominal']; ?> </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <?= form_error('tahun', '<small class="text-danger pl-2">', '</small>'); ?>
-                                </div>
                                 <div class="form-group mb-1">
                                     <label for="bulan" class="mb-0 mt-1">Bulan</label>
                                     <select class="form-control" id="bulan" name="bulan">
                                         <option value=""> Pilih bulan </option>
                                         <?php foreach( $bulan as $b ) : ?>
-                                        <?php if( date('F', time()) == $b['bulan'] ) : ?>
-                                        <option value="<?= $b['id']; ?>" selected>
-                                            <?php else : ?>
-                                        <option value="<?= $b['id']; ?>">
-                                            <?php endif; ?>
+                                        <option data-nominal="<?= $b['nominal']; ?>" value="<?= $b['id']; ?>">
                                             <?= $b['bulan']; ?>
                                         </option>
                                         <?php endforeach; ?>
@@ -85,6 +70,10 @@
                                         <?php endforeach; ?>
                                     </select>
                                     <?= form_error('tahun', '<small class="text-danger pl-2">', '</small>'); ?>
+                                </div>
+                                <div class="form-group mb-1">
+                                    <label for="nominal" class="mb-0 mt-1">Nominal</label>
+                                    <input type="text" class="form-control" name="nominal" readonly>
                                 </div>
                                 <div class="form-group ">
                                     <label for="metBay" class="mb-0 mt-1">Metode Pembayaran</label>

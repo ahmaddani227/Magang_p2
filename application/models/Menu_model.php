@@ -5,9 +5,7 @@ class Menu_model extends CI_Model{
 
     public function addMenu()
     {
-        $this->db->insert('user_menu', ['menu' =>  $this->input->post('menu')]);
-        // FLASHDATA
-        redirect('menu');
+        $this->db->insert('user_menu', ['menu' =>  htmlspecialchars($this->input->post('menu', true))]);
     }
 
     public function Submenu($limit, $start)
@@ -15,7 +13,7 @@ class Menu_model extends CI_Model{
         $querySubmenu = "SELECT `user_sub_menu`.* , `user_menu`.`menu`
                          FROM `user_sub_menu` JOIN `user_menu` 
                          ON `user_sub_menu`.`menu_id` = `user_menu`.`id`
-                         LIMIT $start, $limit";
+                         LIMIT $start, $limit ";
         return $this->db->query($querySubmenu)->result_array();
     }
 
@@ -27,16 +25,14 @@ class Menu_model extends CI_Model{
     public function addSubmenu()
     {
         $data = [
-            'menu_id'   => $this->input->post('menu'),
-            'title'     => $this->input->post('title'),
-            'url'       => $this->input->post('url'),
-            'icon'      => $this->input->post('icon'),
+            'menu_id'   => $this->input->post('menu', true),
+            'title'     => htmlspecialchars($this->input->post('title',true )),
+            'url'       => htmlspecialchars($this->input->post('url',true)),
+            'icon'      => htmlspecialchars($this->input->post('icon',true)),
             'is_active' => $this->input->post('active')
         ];
         $this->db->insert('user_sub_menu', $data);
 
-        // FLASHSDATA
-        redirect('menu/subMenu');
     }
 
     public function hapusSubMenu($id)
@@ -45,4 +41,13 @@ class Menu_model extends CI_Model{
         $this->db->delete('user_sub_menu');
     }
 
+    public function subMenuId($id)
+    {
+        return $this->db->get_where('user_sub_menu', ['id' => $id])->row_array();
+    }
+
+    public function editSubmenu()
+    {
+
+    }
 }

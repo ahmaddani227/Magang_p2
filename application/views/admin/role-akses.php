@@ -4,7 +4,9 @@
         <div class="col-lg-7">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary"> <?= $title; ?> </h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Akses <a
+                            href="<?= base_url('admin/role'); ?>">role</a>
+                        <?= $roleId['role']; ?> </h6>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -12,7 +14,7 @@
 
                             <?php if( !empty($this->session->flashdata('admin')) ) : ?>
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                Role <strong>berhasil</strong> <?= $this->session->flashdata('admin'); ?>
+                                Role akses <strong>berhasil</strong> <?= $this->session->flashdata('admin'); ?>
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -23,23 +25,22 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>
-                                        <th scope="col">Role</th>
-                                        <th scope="col">Aksi</th>
+                                        <th scope="col">Menu</th>
+                                        <th scope="col">Akses</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php $i=1;
-                                    foreach( $role as $r ) : ?>
+                                    <?php $i=1; 
+                                    foreach( $menu as $m ) : ?>
                                     <tr>
                                         <th scope="row"> <?= $i++ ?> </th>
-                                        <td> <?= $r['role']; ?> </td>
+                                        <td> <?= $m['menu']; ?> </td>
                                         <td>
-                                            <a href="<?= base_url('admin/roleAkses/') . $r['id']; ?>"
-                                                class="badge badge-warning">Akses</a>
-                                            <a href="<?= base_url('admin/roleAkses/') . $r['id']; ?>"
-                                                class="badge badge-success">Edit</a>
-                                            <a href="<?= base_url('admin/hapusRole/') . $r['id']; ?>"
-                                                class="badge badge-danger" onclick="return confirm('yakin')">Hapus</a>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    <?= cek_akses($roleId['id'], $m['id']); ?>
+                                                    data-role="<?= $roleId['id']; ?>" data-menu="<?= $m['id']; ?>">
+                                            </div>
                                         </td>
                                     </tr>
                                     <?php endforeach; ?>
@@ -50,21 +51,25 @@
                 </div>
             </div>
         </div>
+
         <div class="col-lg-5">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary"> Tambah Data Role</h6>
+                    <h6 class="m-0 font-weight-bold text-primary"> Edit <a
+                            href="<?= base_url('admin/role'); ?>">role</a> <?= $roleId['role']; ?> </h6>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-lg">
-                            <form action="<?= base_url('admin/role'); ?>" method="post">
+                            <form action="<?= base_url('admin/roleAkses/') . $roleId['id']; ?>" method="post">
+                                <input type="hidden" name="idH" value="<?= $roleId['id']; ?>">
                                 <div class="form-group">
                                     <label for="role">Nama Role</label>
-                                    <input type="text" class="form-control" id="role" name="role">
+                                    <input type="text" class="form-control" id="role" name="role"
+                                        value="<?= $roleId['role']; ?>" autocomplete="off">
                                     <?= form_error('role', '<small class="text-danger pl-2">', '</small>'); ?>
                                 </div>
-                                <button type="submit" class="btn btn-outline-primary  btn-block">Tambah
+                                <button type="submit" class="btn btn-outline-primary  btn-block">Edit
                                     Role</button>
                             </form>
                         </div>
