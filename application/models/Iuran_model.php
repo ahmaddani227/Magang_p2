@@ -62,7 +62,7 @@ class Iuran_model extends CI_Model{
                     'tahun_id' => $tahunId
         ])->row_array();
 
-        if( $bulanId !== $bulanNow['id'] ){
+        if( $bulanId == $bulanNow['id'] ){
             if( $query == false ){
                 $this->db->insert('data_iuran', $data);
                 $this->session->set_flashdata('iuran', 'Pengajuan Iuran');
@@ -85,52 +85,58 @@ class Iuran_model extends CI_Model{
         $tahunId = $this->input->post('tahun');
         $id      = $this->user()['id'];
 
+        $bulanNow = $this->db->get_where('bulan', ['bulan' => date('F', time())])->row_array();
         $query   = $this->db->get_where('data_iuran', [
             'user_id' => $id,
             'bulan_id' => $bulanId,
             'tahun_id' => $tahunId
         ])->row_array();
         
-        if( $query == false ){
-            $data    = [
-                'user_id'   => $id ,
-                'nominal'   => $nominal,
-                'bulan_id'  => $bulanId,
-                'tahun_id'  => $tahunId,
-                'metode_id' => $this->input->post('metBay'),
-                'status'    => 'Lunas',
-                'tgl_bayar' => date('Y-m-d', time())
-            ]; 
-            // insert data ke tabel data_iuran
-            $this->db->insert('data_iuran', $data);
-            
-            /* cek pada tabel pendapatan_bulan( record dengan bulan & tahun yang diinputkan user ) */
-            $data2 = [
-                'bulan_id' => $bulanId,
-                'tahun_id' => $tahunId
-            ];
-            $query = $this->db->get_where('pendapatan_bulan', $data2);
-            // jika tidak ada insert
-            if( $query->num_rows() < 1 ){
-                $this->db->insert('pendapatan_bulan', [
-                    'bulan_id'      => $bulanId,
-                    'tahun_id'      => $tahunId,
-                    'pendapatan'    => $nominal
-                ]);
+        if( $bulanId == $bulanNow['id'] ){
+            if( $query == false ){
+                $data    = [
+                    'user_id'   => $id ,
+                    'nominal'   => $nominal,
+                    'bulan_id'  => $bulanId,
+                    'tahun_id'  => $tahunId,
+                    'metode_id' => $this->input->post('metBay'),
+                    'status'    => 'Lunas',
+                    'tgl_bayar' => date('Y-m-d', time())
+                ]; 
+                // insert data ke tabel data_iuran
+                $this->db->insert('data_iuran', $data);
+                
+                /* cek pada tabel pendapatan_bulan( record dengan bulan & tahun yang diinputkan user ) */
+                $data2 = [
+                    'bulan_id' => $bulanId,
+                    'tahun_id' => $tahunId
+                ];
+                $query = $this->db->get_where('pendapatan_bulan', $data2);
+                // jika tidak ada insert
+                if( $query->num_rows() < 1 ){
+                    $this->db->insert('pendapatan_bulan', [
+                        'bulan_id'      => $bulanId,
+                        'tahun_id'      => $tahunId,
+                        'pendapatan'    => $nominal
+                    ]);
+                }
+                // jika ada update
+                $this->db->set('pendapatan', $query->row_array()['pendapatan'] + $nominal);
+                $this->db->where('id', $query->row_array()['id']);
+                $this->db->update('pendapatan_bulan');
+                
+                // update field pendapatan pada tabel tahun
+                $tahun = $this->db->get_where('tahun', ['id' => $tahunId ])->row_array();
+                $this->db->set('pendapatan', $tahun['pendapatan'] + $nominal);
+                $this->db->where('id', $tahunId);
+                $this->db->update('tahun');
+    
+                $this->session->set_flashdata('iuran', 'Pembayaran Iuran');
+                redirect('iuran');
+            }else{
+                $this->session->set_flashdata('iuran', 'gagal');
+                redirect('iuran/bayar');
             }
-            // jika ada update
-            $this->db->set('pendapatan', $query->row_array()['pendapatan'] + $nominal);
-            $this->db->where('id', $query->row_array()['id']);
-            $this->db->update('pendapatan_bulan');
-            
-            // update field pendapatan pada tabel tahun
-            $tahun = $this->db->get_where('tahun', ['id' => $tahunId ])->row_array();
-            $this->db->set('pendapatan', $tahun['pendapatan'] + $nominal);
-            $this->db->where('id', $tahunId);
-            $this->db->update('tahun');
-
-            $this->session->set_flashdata('iuran', 'Pembayaran Iuran');
-            redirect('iuran');
         }else{
             $this->session->set_flashdata('iuran', 'gagal');
             redirect('iuran/bayar');
