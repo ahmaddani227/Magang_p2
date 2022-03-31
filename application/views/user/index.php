@@ -1,6 +1,9 @@
 <!-- Begin Page Content -->
 <div class="container-fluid">
 
+    <!-- swetalert -->
+    <div class="allog" data-al="<?= $this->session->flashdata('alfl'); ?>"></div>
+
     <!-- Page Heading -->
     <h1 class="h3 mb-4 text-gray-800"> <?= $title; ?> </h1>
 

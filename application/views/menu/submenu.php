@@ -3,79 +3,45 @@
 
     <div class="row">
         <div class="col-lg">
+            <?php if( !empty($this->session->flashdata('menu')) ) : ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                Submenu <strong>berhasil</strong> <?= $this->session->flashdata('menu'); ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg">
             <!-- Page Heading -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary"> <?= $title; ?> </h6>
+                    <h6 class="m-0 font-weight-bold text-primary"> <?= $title; ?> <a
+                            href="<?= base_url('menu/addSubmenu') ?>"> <i class="bi bi-plus-lg"></i></a>
+                    </h6>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-lg">
-
-                            <?php if( validation_errors() ) : ?>
-                            <div class="alert alert-danger" role="alert">
-                                <?= validation_errors(); ?>
-                            </div>
-                            <?php endif; ?>
-
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <a href="" data-toggle="modal" data-target="#tambahSubmenu"
-                                        class="btn btn-primary mb-3">Tambah
-                                        Submenu</a>
-                                </div>
-                                <div class="col-sm-5 offset-sm-4">
-                                    <form action="" method="post">
-                                        <div class="input-group mb-3 float-right">
-                                            <input type="text" class="form-control bg-light border-0 small"
-                                                placeholder="Search...." aria-label="Recipient's username"
-                                                aria-describedby="button-addon2">
-                                            <div class="input-group-append">
-                                                <button class="btn btn-primary" type="button" id="button-addon2"><i
-                                                        class="fas fa-search fa-sm"></i></button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
                             <div class="table-responsive">
-                                <table class="table table-bordered table-hover">
-                                    <thead>
+                                <table id="tableSM" class="table table-bordered table-hover" style="width:100%">
+                                    <thead class="thead-light">
                                         <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Menu</th>
-                                            <th scope="col">Title</th>
-                                            <th scope="col">Url</th>
-                                            <th scope="col">Icon</th>
-                                            <th scope="col">Active</th>
-                                            <th scope="col">Aksi</th>
+                                            <th>#</th>
+                                            <th>Menu</th>
+                                            <th>Title</th>
+                                            <th>Url</th>
+                                            <th>Icon</th>
+                                            <th>Active</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php $i=1; ?>
-                                        <?php foreach( $submenu as $sm ) : ?>
-                                        <tr>
-                                            <th scope="row"> <?= $i; ?> </th>
-                                            <td> <?= $sm['menu']; ?> </td>
-                                            <td> <?= $sm['title']; ?> </td>
-                                            <td> <?= $sm['url']; ?> </td>
-                                            <td> <?= $sm['icon']; ?> </td>
-                                            <td> <?= $sm['is_active']; ?> </td>
-                                            <td>
-                                                <a href="<?= base_url('menu/editSubmenu/') . $sm['id']; ?>"
-                                                    class="badge  badge-success">Edit</a>
-                                                <a href="<?= base_url('menu/hapus/') . $sm['id']; ?>"
-                                                    class="badge  badge-danger"
-                                                    onclick="return confirm('yakin')">Delete</a>
-                                            </td>
-                                        </tr>
-                                        <?php $i++; ?>
-                                        <?php endforeach; ?>
                                     </tbody>
                                 </table>
-
-                                <?= $this->pagination->create_links(); ?>
-
                             </div>
                         </div>
                     </div>
@@ -86,55 +52,10 @@
 </div>
 <!-- /.container-fluid -->
 
-
 </div>
 <!-- End of Main Content -->
-
-<!-- MODAL TAMBAH -->
-<div class="modal fade" id="tambahSubmenu" tabindex="-1" aria-labelledby="tambahSubmenuLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="tambahSubmenuLabel">Tambah Submneu</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="<?= base_url('menu/submenu'); ?>" method="post">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <select class="form-control" id="menu" name="menu">
-                            <option value=""> Pilih menu </option>
-                            <?php foreach( $menu as $m ) : ?>
-                            <option value="<?= $m['id']; ?>"> <?= $m['menu']; ?> </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="title" name="title" placeholder="Title">
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="url" name="url" placeholder="Url">
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="icon" name="icon" placeholder="Icon">
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" checked value="1" id="active" name="active">
-                        <label class="form-check-label" for="active">
-                            Active
-                        </label>
-                    </div>
-                    <div class="form-group">
-
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<!-- AKHIR MODAL TAMBAH -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+    <path fill="white" fill-opacity="1"
+        d="M0,256L40,229.3C80,203,160,149,240,154.7C320,160,400,224,480,261.3C560,299,640,309,720,304C800,299,880,277,960,266.7C1040,256,1120,256,1200,261.3C1280,267,1360,277,1400,282.7L1440,288L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z">
+    </path>
+</svg>

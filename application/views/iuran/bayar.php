@@ -5,7 +5,7 @@
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary"> <a href="<?= base_url('iuran'); ?>">
-                            Data Pembayaran Iuran</a>
+                            <i class="bi bi-arrow-left"></i></a> Data Pembayaran Iuran
                     </h6>
                 </div>
                 <div class="card-body">
@@ -14,6 +14,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
+                                    <th scope="col">Tahun</th>
                                     <th scope="col">Bulan</th>
                                     <th scope="col">Nominal</th>
                                     <th scope="col">Metode</th>
@@ -24,10 +25,15 @@
                             <tbody>
                                 <?php $i=1; 
                                 foreach( $data_iuran as $dI ) : ?>
+                                <?php if( $dI['status'] !== 'Lunas' ) : ?>
+                                <tr class="table-primary">
+                                    <?php else: ?>
                                 <tr>
+                                    <?php endif; ?>
                                     <th scope="row"> <?= $i++ ?> </th>
+                                    <td> <?= $dI['tahun_db']; ?> </td>
                                     <td> <?= $dI['bulan']; ?> </td>
-                                    <td> <?= $dI['nominal']; ?> </td>
+                                    <td> Rp. <?= $dI['nominal']; ?> </td>
                                     <td> <?= $dI['metode_db']; ?> </td>
                                     <td> <?= $dI['status']; ?> </td>
                                     <td> <?= $dI['tgl_bayar']; ?> </td>
@@ -48,6 +54,10 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-lg">
+
+                            <!-- sweetalert jika pembayaran iuran gagal-->
+                            <div class="iuranG" data-iuran="<?= $this->session->flashdata('iuran'); ?>"></div>
+
                             <form action="<?= base_url('iuran/bayar'); ?>" method="POST">
                                 <div class="form-group mb-1">
                                     <label for="bulan" class="mb-0 mt-1">Bulan</label>

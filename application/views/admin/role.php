@@ -4,7 +4,8 @@
         <div class="col-lg-7">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary"> <?= $title; ?> </h6>
+                    <h6 class="m-0 font-weight-bold text-primary"> <?= $title; ?> <a href="#role" class="pb-2"><i
+                                class="bi bi-plus-lg"></i></a> </h6>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -61,7 +62,7 @@
                             <form action="<?= base_url('admin/role'); ?>" method="post">
                                 <div class="form-group">
                                     <label for="role">Nama Role</label>
-                                    <input type="text" class="form-control" id="role" name="role">
+                                    <input type="text" class="form-control" id="role" name="role" autocomplete="off">
                                     <?= form_error('role', '<small class="text-danger pl-2">', '</small>'); ?>
                                 </div>
                                 <button type="submit" class="btn btn-outline-primary  btn-block">Tambah

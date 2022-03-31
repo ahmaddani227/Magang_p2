@@ -5,6 +5,7 @@ class Auth extends CI_Controller {
     public function __construct()
     {
         parent::__construct();
+        pB();
     }
     
     public function index()
@@ -27,7 +28,7 @@ class Auth extends CI_Controller {
         }
     }
     
-    public function _login()
+    private function _login()
     {
         $email = $this->input->post('email');
         $password = $this->input->post('password');
@@ -44,8 +45,10 @@ class Auth extends CI_Controller {
                     $this->session->set_userdata($data);
 
                     if( $user['role_id'] == 1 ){
+                        $this->session->set_flashdata('alfl', 'Login berhasil');
                         redirect('admin');
                     }else{
+                        $this->session->set_flashdata('alfl', 'Login berhasil');
                         redirect('user');
                     }
                 }else{
@@ -97,7 +100,7 @@ class Auth extends CI_Controller {
         $this->session->unset_userdata('email');
         $this->session->unset_userdata('role_id');
 
-        $this->session->set_flashdata('app', '<div class="alert alert-success" role="alert">anda telah logout</div>');
+        $this->session->set_flashdata('log', 'Logout');
         redirect('auth');
     }
 

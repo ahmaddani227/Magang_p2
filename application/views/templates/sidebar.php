@@ -2,11 +2,11 @@
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<?= base_url('admin'); ?>">
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="">
         <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-code"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">Ahmad Dani</div>
+        <div class="sidebar-brand-text mx-3">AhmadDani</div>
     </a>
 
     <!-- Divider -->
@@ -58,7 +58,7 @@
     <!-- AKHIR QUERY MENU -->
 
     <li class="nav-item ">
-        <a class="nav-link pb-0" href="<?= base_url('auth/logout'); ?>">
+        <a class="nav-link pb-0" href="<?= base_url('auth/logout'); ?>" data-toggle="modal" data-target="#logoutModal">
             <i class="fas fa-fw fa-sign-out-alt"></i>
             <span>Logout</span>
         </a>

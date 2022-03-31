@@ -38,3 +38,32 @@ function cek_akses($role_id, $menu_id)
         return "checked='checked'";
     }
 }
+
+function pB(){
+    $ci = get_instance();
+
+    $bulanNow = date('F', time());
+    $tahunNow = date('Y', time());
+    $qB = $ci->db->get_where('bulan', ['bulan' => $bulanNow])->row_array();
+    $qT = $ci->db->get_where('tahun', ['tahun_db' => $tahunNow])->row_array();
+    
+    if( $qT == false ){
+        $data1 = [
+            'tahun_db' => $tahunNow,
+            'pendapatan' => ''
+        ];
+        $ci->db->insert('tahun', $data1);
+    }
+
+    $qPB = $ci->db->get_where('pendapatan_bulan', [
+           'bulan_id' => $qB['id'],
+           'tahun_id' => $qT['id'] ])->row_array();
+    if( $qPB == false ){
+        $data = [
+            'pendapatan' => '',
+            'bulan_id'   => $qB['id'],
+            'tahun_id'   => $qT['id']
+        ];
+        $ci->db->insert('pendapatan_bulan', $data);
+    }
+}

@@ -8,15 +8,6 @@ class Iuran_model extends CI_Model{
        return $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
     }
 
-    public function nominal()
-    {
-        $bulan = date('F', time());
-        $query = "SELECT `nominal` FROM `bulan`
-                  WHERE `bulan` = '$bulan'
-                ";
-        return $this->db->query($query)->result_array();
-    }
-
     public function bulan()
     {
         return $this->db->get('bulan')->result_array();
@@ -25,10 +16,11 @@ class Iuran_model extends CI_Model{
     public function tahun()
     { 
         $tahun_now = date('Y', time()); 
-        $query = "SELECT * FROM `tahun`
-                  WHERE `tahun_db` = $tahun_now
-                 ";
-        return $this->db->query($query)->result_array();
+        $query = $this->db->get_where('tahun', ['tahun_db' => $tahun_now]);
+        if( $query == false ){
+            $this->db->insert('tahun', ['tahun_db' => $tahun_now]);
+        }
+        return $query->result_array();
     }
 
     public function metBay()
@@ -38,20 +30,110 @@ class Iuran_model extends CI_Model{
 
     public function tambahDataIuran()
     {
-        if( $this->input->post('metBay') == 1 ){
-            $data  = [
-                'user_id' => $this->user()['id'] ,
-                'nominal'   => $this->input->post('nominal'),
-                'bulan_id'  => $this->input->post('bulan'),
-                'tahun_id'  => $this->input->post('tahun'),
+        if( $this->input->post('metBay') == 2 ){
+            $this->_bayarOf();
+        }else{
+            $this->_bayarOn();
+        }
+    }
+
+    private function _bayarOf()
+    {
+        $id      = $this->user()['id'];
+        $bulanId = $this->input->post('bulan');
+        $nominal = $this->input->post('nominal');
+        $bulanId = $this->input->post('bulan'); 
+        $tahunId = $this->input->post('tahun');
+        
+        $data    = [
+            'user_id'   => $this->user()['id'] ,
+            'nominal'   => $nominal,
+            'bulan_id'  => $bulanId,
+            'tahun_id'  => $tahunId,
+            'metode_id' => $this->input->post('metBay'),
+            'status'    => 'Pengajuan',
+            'tgl_bayar' => date('Y-m-d', time())
+        ]; 
+
+        $bulanNow = $this->db->get_where('bulan', ['bulan' => date('F', time())])->row_array();
+        $query   = $this->db->get_where('data_iuran', [
+                    'user_id' => $id,
+                    'bulan_id' => $bulanId,
+                    'tahun_id' => $tahunId
+        ])->row_array();
+
+        if( $bulanId !== $bulanNow['id'] ){
+            if( $query == false ){
+                $this->db->insert('data_iuran', $data);
+                $this->session->set_flashdata('iuran', 'Pengajuan Iuran');
+                redirect('iuran');
+            }else{
+                $this->session->set_flashdata('iuran', 'gagal');
+                redirect('iuran/bayar');
+            }
+        }else{
+            $this->session->set_flashdata('iuran', 'gagal');
+            redirect('iuran/bayar');
+        }
+        
+    }
+
+    private function _bayarOn()
+    {
+        $nominal = $this->input->post('nominal');
+        $bulanId = $this->input->post('bulan'); 
+        $tahunId = $this->input->post('tahun');
+        $id      = $this->user()['id'];
+
+        $query   = $this->db->get_where('data_iuran', [
+            'user_id' => $id,
+            'bulan_id' => $bulanId,
+            'tahun_id' => $tahunId
+        ])->row_array();
+        
+        if( $query == false ){
+            $data    = [
+                'user_id'   => $id ,
+                'nominal'   => $nominal,
+                'bulan_id'  => $bulanId,
+                'tahun_id'  => $tahunId,
                 'metode_id' => $this->input->post('metBay'),
                 'status'    => 'Lunas',
                 'tgl_bayar' => date('Y-m-d', time())
-            ];
+            ]; 
+            // insert data ke tabel data_iuran
             $this->db->insert('data_iuran', $data);
+            
+            /* cek pada tabel pendapatan_bulan( record dengan bulan & tahun yang diinputkan user ) */
+            $data2 = [
+                'bulan_id' => $bulanId,
+                'tahun_id' => $tahunId
+            ];
+            $query = $this->db->get_where('pendapatan_bulan', $data2);
+            // jika tidak ada insert
+            if( $query->num_rows() < 1 ){
+                $this->db->insert('pendapatan_bulan', [
+                    'bulan_id'      => $bulanId,
+                    'tahun_id'      => $tahunId,
+                    'pendapatan'    => $nominal
+                ]);
+            }
+            // jika ada update
+            $this->db->set('pendapatan', $query->row_array()['pendapatan'] + $nominal);
+            $this->db->where('id', $query->row_array()['id']);
+            $this->db->update('pendapatan_bulan');
+            
+            // update field pendapatan pada tabel tahun
+            $tahun = $this->db->get_where('tahun', ['id' => $tahunId ])->row_array();
+            $this->db->set('pendapatan', $tahun['pendapatan'] + $nominal);
+            $this->db->where('id', $tahunId);
+            $this->db->update('tahun');
+
+            $this->session->set_flashdata('iuran', 'Pembayaran Iuran');
             redirect('iuran');
         }else{
-            echo 'tunggu';
+            $this->session->set_flashdata('iuran', 'gagal');
+            redirect('iuran/bayar');
         }
     }
 
@@ -62,8 +144,8 @@ class Iuran_model extends CI_Model{
 
     public function dataIuranUser()
     {
-        $id = $this->user()['id'];
-        $tahun = $this->input->post('tahunIndex');
+        $id    = $this->user()['id'];
+        $tahun = date('Y', time());
         $query = "SELECT `data_iuran`.*,
                          `bulan`.`bulan`,
                          `tahun`.`tahun_db`,
@@ -72,9 +154,26 @@ class Iuran_model extends CI_Model{
                   INNER JOIN `bulan` ON `bulan`.`id` = `data_iuran`.`bulan_id`
                   INNER JOIN `tahun` ON `tahun`.`id` = `data_iuran`.`tahun_id`
                   INNER JOIN `metode_pembayaran` ON `metode_pembayaran`.`id` = `data_iuran`.`metode_id`
-                  WHERE `user_id` = $id ORDER BY `bulan`.`id` ASC
+                  WHERE `user_id` = $id AND `tahun_db` = $tahun ORDER BY `bulan`.`id` ASC
                 ";
-                // tambahkan AND WHERE diatas untuk tahun
+        return $this->db->query($query)->result_array();
+    }
+
+    // UNTUK EXPORT EXCEL
+    public function dataIuranUser2()
+    {
+        $id    = $this->user()['id'];
+        $tahun = date('Y', time());
+        $query = "SELECT `data_iuran`.*,
+                         `bulan`.`bulan`,
+                         `tahun`.`tahun_db`,
+                         `metode_pembayaran`.`metode_db`
+                  FROM `data_iuran` 
+                  INNER JOIN `bulan` ON `bulan`.`id` = `data_iuran`.`bulan_id`
+                  INNER JOIN `tahun` ON `tahun`.`id` = `data_iuran`.`tahun_id`
+                  INNER JOIN `metode_pembayaran` ON `metode_pembayaran`.`id` = `data_iuran`.`metode_id`
+                  WHERE `user_id` = $id AND `tahun_db` = $tahun ORDER BY `tgl_bayar` ASC
+                ";
         return $this->db->query($query)->result_array();
     }
 }

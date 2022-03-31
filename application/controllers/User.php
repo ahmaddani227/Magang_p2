@@ -11,8 +11,8 @@ class User extends CI_Controller{
 
     public function index()
     {
-        $data['title'] = 'Profile Saya';
-        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+        $data['title']  = 'Profile Saya';
+        $data['user']   = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
 
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
@@ -23,8 +23,8 @@ class User extends CI_Controller{
     
     public function editProfile()
     {
-        $data['title'] = 'Edit Profile';
-        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+        $data['title']  = 'Edit Profile';
+        $data['user']   = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
 
         $this->form_validation->set_rules('name', 'Nama Lengkap', 'required|trim');
         if ($this->form_validation->run() == FALSE){
@@ -34,15 +34,15 @@ class User extends CI_Controller{
             $this->load->view('user/edit', $data);
             $this->load->view('templates/footer');
         }else{
-            $name = $this->input->post('name');
-            $email = $this->input->post('email');
+            $name   = $this->input->post('name');
+            $email  = $this->input->post('email');
 
             // CEK JIKA ADA GAMBAR YANG DIUPLOAD
             $image = $_FILES['image']['name'];
             if( $image ){
-                $config['upload_path'] = './assets/img/profile/';
-                $config['allowed_types'] = 'jpg|png|jpeg';
-                $config['max_size']     = '2048';
+                $config['upload_path']      = './assets/img/profile/';
+                $config['allowed_types']    = 'jpg|png|jpeg';
+                $config['max_size']         = '2048';
 
                 $this->load->library('upload', $config);
 
@@ -72,8 +72,8 @@ class User extends CI_Controller{
 
     public function ubahSandi()
     {
-        $data['title'] = 'Ubah Sandi';
-        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+        $data['title']  = 'Ubah Sandi';
+        $data['user']   = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
 
         $this->form_validation->set_rules('sandiLama', 'Sandi Lama', 'required|trim');
         $this->form_validation->set_rules('sandiBaru', 'Sandi Baru', 'required|trim|matches[konfirmasi]|min_length[3]|max_length[12]');

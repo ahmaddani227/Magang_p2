@@ -14,7 +14,8 @@
                                 <div class="text-center">
                                     <h1 class="h4 text-gray-900 mb-4"> Login Page</h1>
 
-                                    <?= $this->session->userdata('app'); ?>
+                                    <div class="logout" data-log="<?= $this->session->flashdata('log') ?>"></div>
+                                    <?= $this->session->flashdata('app'); ?>
 
                                 </div>
                                 <form class="user" method="POST" action="<?= base_url('auth'); ?>">

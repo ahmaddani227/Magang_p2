@@ -4,9 +4,9 @@
         <div class="col-lg-7">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Akses <a
-                            href="<?= base_url('admin/role'); ?>">role</a>
-                        <?= $roleId['role']; ?> </h6>
+                    <h6 class="m-0 font-weight-bold text-primary"> <a href="<?= base_url('admin/role'); ?>"><i
+                                class="bi bi-arrow-left"></i></a>
+                        Akses role <?= $roleId['role']; ?> </h6>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -55,8 +55,7 @@
         <div class="col-lg-5">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary"> Edit <a
-                            href="<?= base_url('admin/role'); ?>">role</a> <?= $roleId['role']; ?> </h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Edit role <?= $roleId['role']; ?> </h6>
                 </div>
                 <div class="card-body">
                     <div class="row">
